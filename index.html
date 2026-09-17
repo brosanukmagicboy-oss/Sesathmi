@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Little Something ✨</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial, sans-serif;
+    background:
+        radial-gradient(circle at top,#24113d 0%,#090714 45%,#030308 100%);
+    color:white;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background-image:
+        radial-gradient(#ffffff 1px,transparent 1px),
+        radial-gradient(#ffffff 1px,transparent 1px);
+    background-size:80px 80px,120px 120px;
+    background-position:0 0,40px 60px;
+    opacity:.15;
+    pointer-events:none;
+}
+
+.screen{
+    min-height:100vh;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:25px;
+    position:relative;
+}
+
+.screen.active{
+    display:flex;
+}
+
+.card{
+    width:min(600px,100%);
+    text-align:center;
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.13);
+    border-radius:28px;
+    padding:35px 25px;
+    backdrop-filter:blur(15px);
+    box-shadow:0 20px 60px rgba(0,0,0,.45);
+}
+
+h1{
+    font-size:clamp(30px,8vw,55px);
+    margin-bottom:15px;
+}
+
+h2{
+    font-size:clamp(23px,6vw,34px);
+    margin-bottom:15px;
+}
+
+p{
+    color:#d8d1e5;
+    line-height:1.6;
+    margin-bottom:22px;
+}
+
+button{
+    border:0;
+    padding:14px 24px;
+    border-radius:999px;
+    background:linear-gradient(135deg,#ff5ca8,#a95cff);
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.25s;
+    margin:6px;
+    box-shadow:0 8px 25px rgba(255,92,168,.2);
+}
+
+button:hover{
+    transform:translateY(-3px) scale(1.02);
+}
+
+button:active{
+    transform:scale(.97);
+}
+
+.small{
+    font-size:13px;
+    opacity:.65;
+    margin-top:25px;
+}
+
+.progress{
+    width:100%;
+    height:7px;
+    background:rgba(255,255,255,.1);
+    border-radius:20px;
+    margin:20px 0 25px;
+    overflow:hidden;
+}
+
+.progress-bar{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#ff5ca8,#a95cff);
+    transition:.4s;
+}
+
+.game-area{
+    min-height:260px;
+    position:relative;
+    margin:10px 0 20px;
+}
+
+.star{
+    position:absolute;
+    font-size:42px;
+    cursor:pointer;
+    user-select:none;
+    animation:pulse 1s infinite alternate;
+}
+
+@keyframes pulse{
+    from{transform:scale(.9)}
+    to{transform:scale(1.15)}
+}
+
+.memory-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    max-width:380px;
+    margin:20px auto;
+}
+
+.memory-card{
+    aspect-ratio:1;
+    border-radius:15px;
+    background:rgba(255,255,255,.1);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    cursor:pointer;
+}
+
+.memory-card.open{
+    background:rgba(255,92,168,.25);
+}
+
+.vibe-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:20px;
+}
+
+.vibe{
+    padding:22px 10px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:20px;
+    background:rgba(255,255,255,.06);
+    cursor:pointer;
+    transition:.25s;
+}
+
+.vibe:hover{
+    background:rgba(255,92,168,.15);
+    transform:translateY(-3px);
+}
+
+.reaction{
+    font-size:75px;
+    margin:30px 0;
+    cursor:pointer;
+}
+
+.slider-wrap{
+    margin:35px 0;
+}
+
+input[type="range"]{
+    width:100%;
+}
+
+.question-options{
+    display:grid;
+    gap:12px;
+    margin-top:25px;
+}
+
+.question-options button{
+    width:100%;
+    margin:0;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:none;
+}
+
+.question-options button:hover{
+    background:rgba(255,92,168,.2);
+}
+
+textarea{
+    width:100%;
+    min-height:160px;
+    resize:vertical;
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:20px;
+    padding:18px;
+    background:rgba(0,0,0,.25);
+    color:white;
+    outline:none;
+    font-size:16px;
+    margin:15px 0;
+}
+
+textarea:focus{
+    border-color:#ff5ca8;
+}
+
+.heart{
+    position:fixed;
+    pointer-events:none;
+    animation:heartFall 2.5s linear forwards;
+    font-size:25px;
+    z-index:20;
+}
+
+@keyframes heartFall{
+    0%{
+        transform:translateY(0) rotate(0deg);
+        opacity:1;
+    }
+    100%{
+        transform:translateY(100vh) rotate(360deg);
+        opacity:0;
+    }
+}
+
+.footer{
+    position:fixed;
+    bottom:10px;
+    left:0;
+    right:0;
+    text-align:center;
+    font-size:11px;
+    color:rgba(255,255,255,.35);
+    pointer-events:none;
+}
+
+.result-message{
+    font-size:18px;
+    margin-top:15px;
+}
+
+@media(max-width:500px){
+    .card{
+        padding:28px 18px;
+    }
+
+    .memory-grid{
+        gap:7px;
+    }
+
+    .vibe-grid{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- INTRO -->
+<section class="screen active" id="intro">
+    <div class="card">
+        <div style="font-size:55px;margin-bottom:10px;">✨</div>
+        <h1>A Little Challenge</h1>
+        <p>
+            මම ඔයා වෙනුවෙන් පොඩි challenge එකක් හදලා තියෙනවා.<br>
+            Games ටිකක් තියෙනවා... questions ටිකකුත් තියෙනවා. 👀
+        </p>
+        <button onclick="startGames()">Start Challenge ✨</button>
+    </div>
+</section>
+
+
+<!-- GAME 1 -->
+<section class="screen" id="game1">
+    <div class="card">
+        <h2>⭐ Catch The Star</h2>
+        <p>Star එක click කරන්න!</p>
+
+        <div class="game-area" id="starArea"></div>
+
+        <div id="starScore">Stars: 0 / 5</div>
+    </div>
+</section>
+
+
+<!-- GAME 2 -->
+<section class="screen" id="game2">
+    <div class="card">
+        <h2>🧠 Memory Match</h2>
+        <p>Same emojis දෙක match කරන්න.</p>
+
+        <div class="memory-grid" id="memoryGrid"></div>
+        <div id="memoryStatus"></div>
+    </div>
+</section>
+
+
+<!-- GAME 3 -->
+<section class="screen" id="game3">
+    <div class="card">
+        <h2>✨ Choose Your Vibe</h2>
+        <p>දැන් ඔයාගේ vibe එක මොකක්ද?</p>
+
+        <div class="vibe-grid">
+            <div class="vibe" onclick="finishVibe()">🌸 Chill & Soft</div>
+            <div class="vibe" onclick="finishVibe()">🔥 Fun & Crazy</div>
+            <div class="vibe" onclick="finishVibe()">🌙 Quiet & Calm</div>
+            <div class="vibe" onclick="finishVibe()">✨ Random Energy</div>
+        </div>
+    </div>
+</section>
+
+
+<!-- GAME 4 -->
+<section class="screen" id="game4">
+    <div class="card">
+        <h2>⚡ Quick Reaction</h2>
+        <p>Emoji එක පේන ගමන් click කරන්න!</p>
+
+        <div class="reaction" id="reactionEmoji" onclick="reactionClick()">⏳</div>
+
+        <div id="reactionStatus"></div>
+    </div>
+</section>
+
+
+<!-- GAME 5 -->
+<section class="screen" id="game5">
+    <div class="card">
+        <h2>🎯 One Last Challenge</h2>
+        <p>Slider එක මැදට අරගෙන එන්න.</p>
+
+        <div class="slider-wrap">
+            <input
+                type="range"
+                id="finalSlider"
+                min="0"
+                max="100"
+                value="0"
+                oninput="checkSlider()"
+            >
+        </div>
+
+        <div id="sliderValue">0%</div>
+    </div>
+</section>
+
+
+<!-- QUESTIONS -->
+<section class="screen" id="questions">
+    <div class="card">
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div id="questionNumber"></div>
+        <h2 id="questionText"></h2>
+
+        <div class="question-options" id="questionOptions"></div>
+
+    </div>
+</section>
+
+
+<!-- REVEAL -->
+<section class="screen" id="reveal">
+    <div class="card">
+        <div style="font-size:65px;">💌</div>
+
+        <h1>Okay...</h1>
+
+        <p>
+            ඔයා මේ challenge එක complete කළා. ✨<br><br>
+            දැන් මේකේ ඇත්තම reason එක කියන්න වෙලාව හරි.
+        </p>
+
+        <button onclick="showProposal()">Continue 💗</button>
+    </div>
+</section>
+
+
+<!-- PROPOSAL -->
+<section class="screen" id="proposal">
+    <div class="card">
+
+        <div style="font-size:70px;">🌙❤️</div>
+
+        <h1>Sesathmi...</h1>
+
+        <p>
+            ඇත්තටම මේ හැම දෙයක්ම<br>
+            එකම reason එකකට. 💗
+        </p>
+
+        <h2 style="margin-top:25px;">
+            Will you be my girlfriend? 🥺❤️
+        </h2>
+
+        <div style="margin-top:25px;">
+            <button onclick="sayYes()">ඔව් ❤️</button>
+            <button onclick="sayNo()">නෑ 🤍</button>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- NOTE PAGE -->
+<section class="screen" id="notePage">
+    <div class="card">
+
+        <div style="font-size:60px;">💌</div>
+
+        <h2>දැන් ඔයාගේ වාරේ, Sesathmi...</h2>
+
+        <p>
+            ඔයාට කියන්න තියෙන දේ<br>
+            ඔයාගේම වචන වලින් ලියන්න. ❤️
+        </p>
+
+        <textarea
+            id="replyText"
+            placeholder="මෙතන ඔයාගේ message එක ලියන්න... 💗"
+        ></textarea>
+
+        <button onclick="sendWhatsApp()">
+            Send to Sanuk 💚
+        </button>
+
+        <div class="small">
+            Your 5 answers + your message will be sent together.
+        </div>
+
+    </div>
+</section>
+
+
+<div class="footer">Created by Sanuk</div>
+
+
+<script>
+
+/* =========================
+   GLOBAL VARIABLES
+========================= */
+
+let currentScreen = "intro";
+
+let starCount = 0;
+
+let memoryFirst = null;
+let memorySecond = null;
+let memoryLock = false;
+let memoryMatches = 0;
+
+let reactionReady = false;
+let reactionStart = 0;
+
+let currentQuestion = 0;
+
+/*
+   IMPORTANT:
+   මෙතන save වෙන්නේ QUESTIONS 5ට
+   Sesathmi දෙන answers විතරයි.
+   Games වල answers save කරන්නේ නැහැ.
+*/
+let questionAnswers = [];
+
+
+/* =========================
+   SCREEN CONTROL
+========================= */
+
+function showScreen(id){
+
+    document.querySelectorAll(".screen").forEach(screen=>{
+        screen.classList.remove("active");
+    });
+
+    document.getElementById(id).classList.add("active");
+
+    currentScreen = id;
+}
+
+
+/* =========================
+   START GAMES
+========================= */
+
+function startGames(){
+    starCount = 0;
+    document.getElementById("starScore").innerText = "Stars: 0 / 5";
+
+    showScreen("game1");
+    createStar();
+}
+
+
+/* =========================
+   GAME 1 - CATCH STAR
+========================= */
+
+function createStar(){
+
+    const area = document.getElementById("starArea");
+
+    area.innerHTML = "";
+
+    const star = document.createElement("div");
+
+    star.className = "star";
+    star.innerHTML = "⭐";
+
+    star.style.left =
+        Math.random() * 80 + 5 + "%";
+
+    star.style.top =
+        Math.random() * 70 + 5 + "%";
+
+    star.onclick = ()=>{
+
+        starCount++;
+
+        document.getElementById("starScore").innerText =
+            `Stars: ${starCount} / 5`;
+
+        if(starCount >= 5){
+
+            setTimeout(()=>{
+                showScreen("game2");
+                startMemory();
+            },400);
+
+        }else{
+            createStar();
+        }
+    };
+
+    area.appendChild(star);
+}
+
+
+/* =========================
+   GAME 2 - MEMORY
+========================= */
+
+function startMemory(){
+
+    const grid = document.getElementById("memoryGrid");
+
+    grid.innerHTML = "";
+
+    memoryFirst = null;
+    memorySecond = null;
+    memoryLock = false;
+    memoryMatches = 0;
+
+    const emojis = [
+        "🌸","🌸",
+        "❤️","❤️",
+        "⭐","⭐",
+        "🌙","🌙",
+        "✨","✨",
+        "💗","💗",
+        "🦋","🦋",
+        "🌷","🌷"
+    ];
+
+    emojis.sort(()=>Math.random()-.5);
+
+    emojis.forEach((emoji,index)=>{
+
+        const card = document.createElement("div");
+
+        card.className = "memory-card";
+        card.dataset.emoji = emoji;
+        card.dataset.index = index;
+        card.innerHTML = "❓";
+
+        card.onclick = ()=>memoryClick(card);
+
+        grid.appendChild(card);
+    });
+
+    document.getElementById("memoryStatus").innerText =
+        "Find all the pairs ✨";
+}
+
+
+function memoryClick(card){
+
+    if(
+        memoryLock ||
+        card === memoryFirst ||
+        card.classList.contains("open")
+    ){
+        return;
+    }
+
+    card.classList.add("open");
+    card.innerHTML = card.dataset.emoji;
+
+    if(!memoryFirst){
+
+        memoryFirst = card;
+        return;
+    }
+
+    memorySecond = card;
+    memoryLock = true;
+
+    if(
+        memoryFirst.dataset.emoji ===
+        memorySecond.dataset.emoji
+    ){
+
+        memoryMatches++;
+
+        memoryFirst = null;
+        memorySecond = null;
+        memoryLock = false;
+
+        if(memoryMatches === 8){
+
+            document.getElementById("memoryStatus").innerText =
+                "Perfect! 💗";
+
+            setTimeout(()=>{
+                showScreen("game3");
+            },700);
+        }
+
+    }else{
+
+        setTimeout(()=>{
+
+            memoryFirst.classList.remove("open");
+            memorySecond.classList.remove("open");
+
+            memoryFirst.innerHTML = "❓";
+            memorySecond.innerHTML = "❓";
+
+            memoryFirst = null;
+            memorySecond = null;
+
+            memoryLock = false;
+
+        },700);
+    }
+}
+
+
+/* =========================
+   GAME 3
+========================= */
+
+function finishVibe(){
+
+    showScreen("game4");
+
+    document.getElementById("reactionEmoji").innerHTML = "⏳";
+
+    reactionReady = false;
+
+    setTimeout(()=>{
+
+        document.getElementById("reactionEmoji").innerHTML = "⚡";
+
+        reactionReady = true;
+        reactionStart = Date.now();
+
+    },Math.random()*1800 + 1200);
+}
+
+
+/* =========================
+   GAME 4 - REACTION
+========================= */
+
+function reactionClick(){
+
+    if(!reactionReady){
+
+        document.getElementById("reactionStatus").innerText =
+            "Wait for ⚡ ...";
+
+        return;
+    }
+
+    const time = Date.now() - reactionStart;
+
+    document.getElementById("reactionStatus").innerText =
+        `${time} ms! Nice reaction 😎`;
+
+    reactionReady = false;
+
+    setTimeout(()=>{
+        showScreen("game5");
+    },900);
+}
+
+
+/* =========================
+   GAME 5 - SLIDER
+========================= */
+
+function checkSlider(){
+
+    const slider = document.getElementById("finalSlider");
+
+    const value = Number(slider.value);
+
+    document.getElementById("sliderValue").innerText =
+        value + "%";
+
+    if(value >= 48 && value <= 52){
+
+        document.getElementById("sliderValue").innerText =
+            "Perfect! ✨";
+
+        setTimeout(()=>{
+            startQuestions();
+        },500);
+    }
+}
+
+
+/* =========================
+   QUESTIONS
+========================= */
+
+const questions = [
+
+    {
+        text:"Free day එකක් ලැබුණොත් ඔයා වැඩියෙන්ම කැමති මොකකටද? 🌸",
+        options:[
+            "🌊 Beach Day",
+            "☕ Cafe & Chill",
+            "🎬 Movie Day",
+            "🚗 Random Trip"
+        ]
+    },
+
+    {
+        text:"ඔයාගේ mood එක හොඳ කරන්න ලේසිම දේ මොකක්ද? ✨",
+        options:[
+            "🎵 Music",
+            "😂 Funny Things",
+            "🍫 Something Nice",
+            "💬 Good Conversation"
+        ]
+    },
+
+    {
+        text:"ඔයාට perfect evening එකක් කියන්නේ... 🌙",
+        options:[
+            "🌆 Evening Walk",
+            "🍕 Food & Talk",
+            "🎬 Movie",
+            "🌌 Just Chill"
+        ]
+    },
+
+    {
+        text:"ඔයා spontaneous ද, නැත්තම් plan කරලා වැඩ කරන කෙනෙක්ද? 👀",
+        options:[
+            "⚡ 100% Spontaneous",
+            "📝 Plan Everything",
+            "😌 Depends",
+            "🤷 Let's See"
+        ]
+    },
+
+    {
+        text:"ඔයාට memories හදන්න වැඩියෙන්ම කැමති කොහොමද? 📸",
+        options:[
+            "📸 Photos",
+            "🎥 Videos",
+            "🧠 Just Remember It",
+            "✨ Little Random Moments"
+        ]
+    }
+
+];
+
+
+function startQuestions(){
+
+    currentQuestion = 0;
+
+    /*
+       IMPORTANT:
+       Previous answers clear කරනවා.
+    */
+    questionAnswers = [];
+
+    showScreen("questions");
+
+    loadQuestion();
+}
+
+
+function loadQuestion(){
+
+    const question = questions[currentQuestion];
+
+    document.getElementById("questionNumber").innerText =
+        `Question ${currentQuestion + 1} / ${questions.length}`;
+
+    document.getElementById("questionText").innerText =
+        question.text;
+
+    document.getElementById("progressBar").style.width =
+        ((currentQuestion + 1) / questions.length * 100) + "%";
+
+    const options =
+        document.getElementById("questionOptions");
+
+    options.innerHTML = "";
+
+    question.options.forEach(option=>{
+
+        const button = document.createElement("button");
+
+        button.innerText = option;
+
+        button.onclick = ()=>{
+
+            /*
+              මේක තමයි වැදගත්ම update එක.
+
+              Sesathmi තෝරන answer එක
+              questionAnswers array එකේ save වෙනවා.
+            */
+            questionAnswers[currentQuestion] = option;
+
+            currentQuestion++;
+
+            if(currentQuestion < questions.length){
+
+                loadQuestion();
+
+            }else{
+
+                setTimeout(()=>{
+                    showScreen("reveal");
+                },300);
+
+            }
+        };
+
+        options.appendChild(button);
+    });
+}
+
+
+/* =========================
+   REVEAL
+========================= */
+
+function showProposal(){
+    showScreen("proposal");
+}
+
+
+/* =========================
+   PROPOSAL ANSWERS
+========================= */
+
+function sayYes(){
+
+    createHearts();
+
+    setTimeout(()=>{
+        showScreen("notePage");
+    },900);
+}
+
+
+function sayNo(){
+
+    /*
+      No කියලා දුන්නත් separate page එකට යනවා.
+      එතන එයාට තමන්ගේ message එක ලියන්න පුළුවන්.
+    */
+    setTimeout(()=>{
+        showScreen("notePage");
+    },300);
+}
+
+
+/* =========================
+   HEART CONFETTI
+========================= */
+
+function createHearts(){
+
+    for(let i=0;i<35;i++){
+
+        setTimeout(()=>{
+
+            const heart =
+                document.createElement("div");
+
+            heart.className = "heart";
+
+            heart.innerHTML =
+                ["❤️","💗","💖","💕","✨"]
+                [Math.floor(Math.random()*5)];
+
+            heart.style.left =
+                Math.random()*100 + "vw";
+
+            heart.style.top = "-30px";
+
+            heart.style.animationDuration =
+                (2 + Math.random()*2) + "s";
+
+            document.body.appendChild(heart);
+
+            setTimeout(()=>{
+                heart.remove();
+            },4000);
+
+        },i*50);
+    }
+}
+
+
+/* =========================
+   WHATSAPP
+========================= */
+
+function sendWhatsApp(){
+
+    const reply =
+        document.getElementById("replyText")
+        .value
+        .trim();
+
+    if(!reply){
+
+        alert("මුලින් ඔයාගේ message එක ලියන්න 😊");
+
+        return;
+    }
+
+    /*
+       මෙතන Games වල data කිසිම දෙයක් නැහැ.
+
+       questionAnswers array එකේ තියෙන්නේ
+       Questions 5ට Sesathmi දුන්න answers විතරයි.
+    */
+
+    const answersText = questionAnswers
+        .map((answer,index)=>{
+            return `${index + 1}. ${answer}`;
+        })
+        .join("\n");
+
+
+    /*
+       WhatsApp එකට යන final message.
+    */
+
+    const message =
+`💌 Sesathmi's Answers
+
+${answersText}
+
+💗 Her Message:
+${reply}
+
+— Sesathmi ❤️`;
+
+
+    /*
+       Sanukගේ WhatsApp number
+    */
+
+    const whatsappURL =
+        `https://wa.me/94724078520?text=${encodeURIComponent(message)}`;
+
+
+    window.open(whatsappURL,"_blank");
+}
+
+</script>
+
+</body>
+  </html>
